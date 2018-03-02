@@ -22,7 +22,7 @@ function getInfo(element) {
 		ret["Mavo Node"] = {
 			"Property": node.property,
 			"Type": node.nodeType,
-			"Data": Mavo.safeToJSON(node.liveData)
+			"Data": Mavo.safeToJSON(node.liveData) + ""
 		};
 	}
 
@@ -32,7 +32,11 @@ function getInfo(element) {
 		ret.Expressions = {};
 
 		for (let e of expressions) {
-			ret.Expressions[e.attribute || "<em>(Text Content)</em>"] = e.expression;
+			var value = e.value.length === 1? e.value[0] : e.value;
+			ret.Expressions[e.attribute || "<em>(Text Content)</em>"] = {
+				Template: e.expression,
+				"Current value": Mavo.safeToJSON(value) + ""
+			};
 		}
 	}
 

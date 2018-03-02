@@ -5,23 +5,32 @@ function render(info) {
 	document.body.classList.remove("error");
 
 	for (var header in info) {
-		var dl, details = $.create("details", {
+		var details = $.create("details", {
 			open: true,
 			contents: [
 				{tag: "summary", textContent: header},
-				dl = $.create("dl")
+				objectToDl(info[header])
 			]
 		});
 
-		for (var label in info[header]) {
-			$.contents(dl, [
-				{tag: "dt", innerHTML: label},
-				{tag: "dd", innerHTML: info[header][label]}
-			]);
-		}
-
 		document.body.append(details);
 	}
+}
+
+function objectToDl(obj) {
+	var dl = $.create("dl");
+
+	for (let label in obj) {
+		var value = obj[label];
+		var contents = $.type(value) == "object"? objectToDl(value) : value;
+
+		$.contents(dl, [
+			{tag: "dt", innerHTML: label},
+			{tag: "dd", contents: contents}
+		]);
+	}
+
+	return dl;
 }
 
 function showError(e) {

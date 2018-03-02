@@ -1,0 +1,33 @@
+.error {
+	color: red;
+	font-weight: bold;
+}
+
+dl {
+	display: grid;
+	margin: .3em;
+	grid-template-columns: 12em 1fr;
+	--border: 1px solid rgba(0,0,0,.1);
+	border: var(--border);
+	border-color: rgba(0,0,0,.15)
+}
+
+	dt, dd {
+		margin: 0;
+		padding: .2em .4em;
+		border-bottom: var(--border);
+	}
+
+	dt:last-of-type, dd:last-of-type {
+		border-bottom: none;
+	}
+
+	dt {
+		grid-column: 1;
+		background: hsl(220,10%,96%);
+	}
+
+	dd {
+		grid-column: 2;
+		border-left: var(--border);
+	}

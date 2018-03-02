@@ -2,7 +2,7 @@
 
 Chrome extension to inspect details about Mavo elements.
 
-This is a work in process. To install:
+This is a work in progress. To install:
 
 - Clone this repo.
 - Go to `chrome://extensions`

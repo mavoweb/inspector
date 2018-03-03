@@ -1,15 +1,36 @@
+:root {
+	--gray: 220, 10%;
+}
+
 .error {
 	color: red;
 	font-weight: bold;
 }
 
+.de-emphasized {
+	opacity: .5;
+}
+
+dl, form {
+	margin: .2rem;
+}
+
 dl {
 	display: grid;
 	margin: .3em;
-	grid-template-columns: 12em 1fr;
+	grid-template-columns: auto 1fr;
 	--border: 1px solid rgba(0,0,0,.1);
 	border: var(--border);
 	border-color: rgba(0,0,0,.15)
+}
+
+/* Top-level dl */
+:not(dd) dl {
+	grid-template-columns: minmax(5ch, auto) 1fr;
+}
+
+dl.type-array {
+	grid-template-columns: minmax(2ch, auto) 1fr;
 }
 
 	dt, dd {
@@ -24,10 +45,33 @@ dl {
 
 	dt {
 		grid-column: 1;
-		background: hsl(220,10%,96%);
+		background: hsl(var(--gray), 96%);
 	}
 
 	dd {
 		grid-column: 2;
 		border-left: var(--border);
 	}
+
+form.quick-eval {
+	display: flex;
+}
+
+	form.quick-eval input {
+		flex: 1;
+	}
+
+	form.quick-eval button {
+		background: hsl(var(--gray), 94%);
+		border: var(--border);
+		border-left: 0;
+	}
+
+	form.quick-eval button:hover {
+		background: hsl(var(--gray), 90%);
+	}
+
+.type-empty {
+	font-weight: bold;
+	opacity: .5;
+}

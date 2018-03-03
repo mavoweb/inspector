@@ -4,7 +4,7 @@ function formatObject(obj, o = {}, label) {
 	if (type == "object" || type == "array") {
 		var length = Object.keys(obj).length;
 
-		if (length === 0) {
+		if (length === 0 && label) {
 			return $.create({tag: "em", textContent: `(Empty ${type})`, className: "type-empty"});
 		}
 

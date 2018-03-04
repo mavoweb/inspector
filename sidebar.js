@@ -42,11 +42,17 @@ function getInfo(element) {
 	var ret = {};
 
 	function getNodeInfo(node) {
-		return {
+		var ret = {
 			"Property": node.property,
 			"Type": node.nodeType,
 			"Data": JSON.parse(Mavo.safeToJSON(node.liveData))
 		};
+
+		if (node.collection) {
+			ret.Collection = getNodeInfo(node.collection);
+		}
+
+		return ret;
 	}
 
 	if (node) {

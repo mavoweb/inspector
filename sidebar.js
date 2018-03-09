@@ -43,7 +43,7 @@ function getInfo(element) {
 
 	function getNodeInfo(node) {
 		var ret = {
-			"Property": node.property,
+			"Property": node.property || "(Root)",
 			"Type": node.nodeType,
 			"Data": JSON.parse(Mavo.safeToJSON(node.liveData))
 		};
@@ -83,12 +83,22 @@ function getInfo(element) {
 
 // Beware: This runs in the context of the page!!
 function quickEval(element, code) {
-	var node = Mavo.Node.getClosest(element).group;
-	var data = node.getData({live: true});
+	var node = Mavo.Node.getClosest(element);
+	node = node.collection? node : node.group;
+	var data = node.getLiveData();
 	var expression = new Mavo.Expression(code);
-	var value = JSON.parse(Mavo.safeToJSON(expression.eval(data)));
-	console.log(code, "=", value);
-	return value;
+	var value = expression.eval(data);
+
+	if (value instanceof Error) {
+		return {
+			isException: true,
+			value: value.message
+		};
+	}
+
+	var reserialized = JSON.parse(Mavo.safeToJSON(value));
+	console.log(code, "=", reserialized);
+	return reserialized;
 }
 
 function render(info) {
@@ -115,7 +125,7 @@ function render(info) {
 						tag: "form",
 						className: "quick-eval",
 						contents: [
-							{tag: "input", name: "expression"},
+							{tag: "input", name: "expression", autocomplete: "on"},
 							{tag: "button", textContent: "Run"}
 						],
 						events: {
@@ -123,10 +133,22 @@ function render(info) {
 								evt.preventDefault();
 								var dd = this.parentNode;
 								var output = $("output", dd) || $.create("output", {inside: dd});
+								var expr = this.expression.value;
 
-								eval(`(${quickEval})($0, "${this.expression.value}")`).then(value => {
+								eval(`(${quickEval})($0, ${JSON.stringify(expr)})`)
+								.then(value => {
+									output.className = "";
 									output.textContent = "";
+
+									if (value && value.isException && value.value) {
+										return Promise.reject(value);
+									}
+
 									output.append(formatObject(value, {isData: true}));
+								})
+								.catch(err => {
+									output.className = "error";
+									output.textContent = friendlyError(err.value, expr);
 								});
 							}
 						}
@@ -139,6 +161,41 @@ function render(info) {
 
 		document.body.append(details);
 	}
+}
+
+function friendlyError(message, expr) {
+	var typeRegex = /^([A-Z][a-z]+)Error: /;
+	var type = message.match(typeRegex);
+	type = type? type[1].toLowerCase() : "";
+	message = message.replace(typeRegex, "");
+	var label = !type || type == "syntax"? "Sorry, I don’t understand this expression" : `There has been a ${type}-related issue`;
+
+	// Friendlify common errors
+	var unexpected = message.match(/^Unexpected token (\S+)/);
+
+	if (unexpected) {
+		unexpected = unexpected[1];
+
+		message = "Something is missing, or there are extra characters. Check for ";
+
+		if (unexpected == ";") {
+			message += "missing ) or extra (.";
+		}
+		else if (unexpected == ")") {
+			message += "missing operands or extra ).";
+		}
+		else {
+			message += "missing operands or other terms, " + (expr.indexOf(unexpected) > -1? `especially before the ${unexpected}.` : ".");
+		}
+	}
+	else if (message == "Unexpected token ILLEGAL" || message == "Invalid or unexpected token") {
+		message = "There is an invalid character somewhere.";
+	}
+
+	// Non-developers don't know wtf a token is.
+	message = message.replace(/\s+token\s+/g, " ");
+
+	return `😳 ${label}: ${message}`;
 }
 
 function showError(e) {

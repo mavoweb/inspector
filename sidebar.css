@@ -75,3 +75,11 @@ form.quick-eval {
 	font-weight: bold;
 	opacity: .5;
 }
+
+.property-root {
+	font-weight: bold;
+}
+
+	.property-root::before {
+		content: "🌳 "
+	}

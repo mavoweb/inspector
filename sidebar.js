@@ -87,7 +87,7 @@ function quickEval(element, code) {
 	node = node.collection? node : node.group;
 	var data = node.getLiveData();
 	var expression = new Mavo.Expression(code);
-	var value = expression.eval(data);
+	var value = expression.eval(data, {actions: true});
 
 	if (value instanceof Error) {
 		return {
@@ -96,7 +96,8 @@ function quickEval(element, code) {
 		};
 	}
 
-	var reserialized = JSON.parse(Mavo.safeToJSON(value));
+	var serialized = Mavo.safeToJSON(value);
+	var reserialized = serialized === undefined? undefined : JSON.parse(serialized);
 	console.log(code, "=", reserialized);
 	return reserialized;
 }
@@ -171,7 +172,7 @@ function friendlyError(message, expr) {
 	var label = !type || type == "syntax"? "Sorry, I don’t understand this expression" : `There has been a ${type}-related issue`;
 
 	// Friendlify common errors
-	var unexpected = message.match(/^Unexpected token (\S+)/);
+	var unexpected = message.match(/^Unexpected token (\S+)$/);
 
 	if (unexpected) {
 		unexpected = unexpected[1];
@@ -185,7 +186,7 @@ function friendlyError(message, expr) {
 			message += "missing operands or extra ).";
 		}
 		else {
-			message += "missing operands or other terms, " + (expr.indexOf(unexpected) > -1? `especially before the ${unexpected}.` : ".");
+			message += "missing operands or other terms" + (expr.indexOf(unexpected) > -1? `, especially before the ${unexpected}.` : ".");
 		}
 	}
 	else if (message == "Unexpected token ILLEGAL" || message == "Invalid or unexpected token") {

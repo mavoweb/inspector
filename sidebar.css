@@ -59,6 +59,7 @@ form.quick-eval {
 
 	form.quick-eval input {
 		flex: 1;
+		border: var(--border);
 	}
 
 	form.quick-eval button {

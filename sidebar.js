@@ -42,9 +42,15 @@ function getInfo(element) {
 	var ret = {};
 
 	function getNodeInfo(node) {
+		var type = node instanceof Mavo.Primitive? node.datatype || "Text" : node.nodeType;
+
+		if (type == "boolean") {
+			type = "True/false";
+		}
+
 		var ret = {
 			"Property": node.property || "(Root)",
-			"Type": node.nodeType,
+			"Type": type,
 			"Data": JSON.parse(Mavo.safeToJSON(node.liveData))
 		};
 

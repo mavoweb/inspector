@@ -1,6 +1,12 @@
 function formatObject(obj, o = {}, label) {
 	var type = $.type(obj);
 
+	var flags = {...o};
+
+	if (o.dataLabels && label) {
+		flags.isData = flags.isData || o.dataLabels.includes(label);
+	}
+
 	if (type == "object" || type == "array") {
 		var length = Object.keys(obj).length;
 
@@ -9,12 +15,6 @@ function formatObject(obj, o = {}, label) {
 		}
 
 		var ret = $.create("dl", {className: "type-" + type});
-
-		var flags = {...o};
-
-		if (o.dataLabels && label) {
-			flags.isData = flags.isData || o.dataLabels.includes(label);
-		}
 
 		for (let label in obj) {
 			let value = obj[label];
@@ -44,7 +44,7 @@ function formatObject(obj, o = {}, label) {
 	}
 
 	// Primitive
-	return o.isData? formatPrimitive(obj) : obj;
+	return flags.isData? formatPrimitive(obj) : obj;
 }
 
 function capitalize(str) {

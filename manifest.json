@@ -1,6 +1,6 @@
 {
 	"name": "Mavo Inspector",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"manifest_version": 2,
 	"description": "Inspect Mavo apps",
 	"devtools_page": "mavo.html",

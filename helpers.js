@@ -44,7 +44,7 @@ function formatObject(obj, o = {}, label) {
 	}
 
 	// Primitive
-	return flags.isData? formatPrimitive(obj) : obj;
+	return (flags.isData? formatPrimitive(obj) : obj) + "";
 }
 
 function capitalize(str) {
@@ -56,5 +56,5 @@ function formatPrimitive(value) {
 		return $.create({tag: "em", textContent: "(Empty)", className: "type-empty"});
 	}
 
-	return JSON.stringify(value);
+	return typeof value === "string"? `"${value}"` : value;
 }

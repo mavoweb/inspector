@@ -37,6 +37,10 @@ function eval(code) {
 
 // Beware: This runs in the context of the page!!
 function getInfo(element) {
+	if (!window.Mavo) {
+		return;
+	}
+
 	var node = Mavo.Node.get(element);
 	var closestNode = node || Mavo.Node.getClosest(element);
 	var ret = {};
@@ -51,7 +55,7 @@ function getInfo(element) {
 		var ret = {
 			"Property": node.property || "(Root)",
 			"Type": type,
-			"Data": JSON.parse(Mavo.safeToJSON(node.liveData))
+			"Data": JSON.parse(Mavo.safeToJSON(node.liveData.data))
 		};
 
 		if (node.collection) {
@@ -89,6 +93,10 @@ function getInfo(element) {
 
 // Beware: This runs in the context of the page!!
 function quickEval(element, code) {
+	if (!window.Mavo) {
+		return;
+	}
+
 	var node = Mavo.Node.getClosest(element);
 	node = node.collection? node : node.group;
 	var data = node.getLiveData();
@@ -112,6 +120,9 @@ function render(info) {
 	document.body.textContent = "";
 	document.body.classList.remove("error");
 
+	$.create({
+		contents: {
+			tag: "form",
 	for (var header in info) {
 		var dl, details = $.create("details", {
 			open: true,
@@ -124,48 +135,6 @@ function render(info) {
 		});
 
 		if (header == "Expressions") {
-			var qe = $.contents(document.createDocumentFragment(), [
-				{tag: "dt", textContent: "Quick eval"},
-				{
-					tag: "dd",
-					contents: {
-						tag: "form",
-						className: "quick-eval",
-						contents: [
-							{tag: "input", name: "expression", autocomplete: "on"},
-							{tag: "button", textContent: "Run"}
-						],
-						events: {
-							submit: function(evt) {
-								evt.preventDefault();
-								var dd = this.parentNode;
-								var output = $("output", dd) || $.create("output", {inside: dd});
-								var expr = this.expression.value;
-
-								eval(`(${quickEval})($0, ${JSON.stringify(expr)})`)
-								.then(value => {
-									output.className = "";
-									output.textContent = "";
-
-									if (value && value.isException && value.value) {
-										return Promise.reject(value);
-									}
-
-									output.append(formatObject(value, {isData: true}));
-								})
-								.catch(err => {
-									output.className = "error";
-									output.textContent = friendlyError(err.value, expr);
-								});
-							}
-						}
-					}
-				}
-			]);
-
-			dl.prepend(qe);
-		}
-
 		document.body.append(details);
 	}
 }

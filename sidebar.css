@@ -2,6 +2,14 @@
 	--gray: 220, 10%;
 }
 
+body {
+	margin: 0;
+}
+
+body > details {
+	padding: 1em;
+}
+
 .error {
 	color: red;
 	font-weight: bold;
@@ -53,23 +61,37 @@ dl.type-array {
 		border-left: var(--border);
 	}
 
-form.quick-eval {
-	display: flex;
+.quick-eval {
+
 }
 
-	form.quick-eval input {
-		flex: 1;
-		border: var(--border);
-	}
-
-	form.quick-eval button {
+	.quick-eval form {
+		display: flex;
+		padding: .5em;
+		margin: 0;
 		background: hsl(var(--gray), 94%);
-		border: var(--border);
-		border-left: 0;
+		--border: 1px solid rgba(0,0,0,.15);
 	}
 
-	form.quick-eval button:hover {
-		background: hsl(var(--gray), 90%);
+	.quick-eval input {
+		padding: .3em;
+		border: var(--border);
+		flex: 1;
+		border-right: 0;
+	}
+
+	.quick-eval button {
+		background: hsl(var(--gray), 84%);
+		border: var(--border);
+	}
+
+	.quick-eval button:hover {
+		background: hsl(var(--gray), 82%);
+	}
+
+	.quick-eval output {
+		display: block;
+		padding: 0 1em;
 	}
 
 .type-empty {
@@ -82,5 +104,5 @@ form.quick-eval {
 }
 
 	.property-root::before {
-		content: "🌳 "
+		content: "ðŸŒ³ "
 	}

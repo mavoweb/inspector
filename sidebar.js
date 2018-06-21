@@ -116,13 +116,112 @@ function quickEval(element, code) {
 	return reserialized;
 }
 
+var expressionHistory = localStorage.quickeval? JSON.parse(localStorage.quickeval).slice(0, 15) : [];
+var currentEntry = -1;
+var currentValue;
+
+addEventListener("unload", evt => {
+	localStorage.quickeval = JSON.stringify(expressionHistory);
+});
+
+function createQuickEval() {
+	$.create({
+		className: "quick-eval",
+		contents: {
+			tag: "form",
+			contents: [
+				{
+					tag: "input",
+					name: "expression",
+					autocomplete: "off",
+					placeholder: "Quick eval",
+					events: {
+						keyup: function(evt) {
+
+							if (evt.key === "ArrowUp") {
+								console.log(expressionHistory, currentEntry, currentValue, evt.key);
+								if (expressionHistory.length) {
+									if (currentEntry === -1) {
+										currentEntry = expressionHistory.length;
+										currentValue = this.value;
+									}
+
+									if (currentEntry > 0) {
+										if (this.value ===  expressionHistory[currentEntry - 1]) {
+											// Remove just executed entry
+											currentEntry--;
+										}
+
+										this.value = expressionHistory[--currentEntry];
+										this.selectionEnd = this.value.length;
+									}
+
+									evt.preventDefault();
+								}
+							}
+							else if (evt.key === "ArrowDown") {
+								console.log(expressionHistory, currentEntry, currentValue, evt.key);
+								if (expressionHistory.length && currentEntry > -1) {
+									if (currentEntry < expressionHistory.length - 1) {
+										this.value = expressionHistory[++currentEntry];
+									}
+									else {
+										this.value = currentValue;
+										currentEntry = -1;
+									}
+
+									this.selectionEnd = this.value.length;
+
+									evt.preventDefault();
+								}
+							}
+						}
+					}
+				},
+				{tag: "button", textContent: "Run"}
+			],
+			events: {
+				submit: function(evt) {
+					evt.preventDefault();
+					var container = this.parentNode;
+					var output = $("output", container) || $.create("output", {inside: container});
+					var expr = this.expression.value;
+
+					if (expr !== expressionHistory[expressionHistory.length -1]) {
+						expressionHistory.push(expr);
+					}
+
+					currentEntry = -1;
+					this.expression.select();
+
+					eval(`(${quickEval})($0, ${JSON.stringify(expr)})`)
+					.then(value => {
+						output.className = "";
+						output.textContent = "";
+
+						if (value && value.isException && value.value) {
+							return Promise.reject(value);
+						}
+
+						output.append(formatObject(value, {isData: true}));
+					})
+					.catch(err => {
+						output.className = "error";
+						output.textContent = friendlyError(err.value, expr);
+					});
+				}
+			}
+		},
+		start: document.body
+	});
+}
+
 function render(info) {
 	document.body.textContent = "";
 	document.body.classList.remove("error");
 
-	$.create({
-		contents: {
-			tag: "form",
+	createQuickEval();
+
 	for (var header in info) {
 		var dl, details = $.create("details", {
 			open: true,
@@ -134,7 +233,6 @@ function render(info) {
 			]
 		});
 
-		if (header == "Expressions") {
 		document.body.append(details);
 	}
 }

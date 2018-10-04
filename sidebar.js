@@ -131,6 +131,14 @@ function createQuickEval() {
 			tag: "form",
 			contents: [
 				{
+					className: "refresh",
+					tag: "button",
+					textContent: "Refresh",
+					events: {
+						click: () => updateSidebar(),
+					},
+				},
+				{
 					tag: "input",
 					name: "expression",
 					autocomplete: "off",

@@ -85,6 +85,10 @@ dl.type-array {
 		border: var(--border);
 	}
 
+	button.refresh {
+		margin-right: .5em;
+	}
+
 	.quick-eval button:hover {
 		background: hsl(var(--gray), 82%);
 	}

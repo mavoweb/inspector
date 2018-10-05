@@ -133,6 +133,7 @@ function createQuickEval() {
 				{
 					className: "refresh",
 					tag: "button",
+					type: "button",
 					textContent: "Refresh",
 					events: {
 						click: (event) => {

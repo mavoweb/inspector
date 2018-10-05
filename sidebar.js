@@ -135,7 +135,10 @@ function createQuickEval() {
 					tag: "button",
 					textContent: "Refresh",
 					events: {
-						click: () => updateSidebar(),
+						click: (event) => {
+							event.preventDefault();
+							updateSidebar();
+						}
 					},
 				},
 				{

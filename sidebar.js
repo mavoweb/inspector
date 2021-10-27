@@ -46,7 +46,7 @@ function getInfo(element) {
 	var ret = {};
 
 	function getNodeInfo(node) {
-		var type = node instanceof Mavo.Primitive? node.datatype || "Text" : node.nodeType;
+		var type = node instanceof Mavo.Primitive? node.datatype || "Text" : node.nodeType || node.constructor.name;
 
 		if (type == "boolean") {
 			type = "True/false";

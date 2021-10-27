@@ -34,11 +34,11 @@ dl {
 
 /* Top-level dl */
 :not(dd) dl {
-	grid-template-columns: minmax(5ch, auto) 1fr;
+	grid-template-columns: auto 1fr;
 }
 
 dl.type-array {
-	grid-template-columns: minmax(2ch, auto) 1fr;
+	grid-template-columns: auto 1fr;
 }
 
 	dt, dd {
@@ -52,8 +52,14 @@ dl.type-array {
 	}
 
 	dt {
+		max-width: 30ch;
+		text-overflow: ellipsis;
 		grid-column: 1;
 		background: hsl(var(--gray), 96%);
+	}
+
+	dl.type-array > dt {
+		max-width: 3ch;
 	}
 
 	dd {
